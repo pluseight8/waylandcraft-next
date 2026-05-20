@@ -48,11 +48,10 @@ public class DesktopIcon {
 		 */
 		
 		if(getExtension(file).equals("png")) {
-			try {
-				FileInputStream stream = new FileInputStream(file);
+			try (FileInputStream stream = new FileInputStream(file)) {
 				this.image = IconImage.standard(NativeImage.read(stream));
 			} catch(IOException e) {
-				e.printStackTrace();
+				WaylandCraft.LOGGER.warn("Failed to preload PNG icon at {}", file.getAbsolutePath(), e);
 			}
 		}
 		else if(getExtension(file).equals("svg")) {
@@ -64,6 +63,8 @@ public class DesktopIcon {
 			
 			if(wlc.bridge.renderSVG(file, width, height, addr)) {
 				this.image = IconImage.direct(NativeImageMixin.createImage(NativeImage.Format.RGBA, width, height, false, addr), buf);
+			} else {
+				WaylandCraft.LOGGER.warn("Failed to render SVG icon at {}", file.getAbsolutePath());
 			}
 		}
 	}

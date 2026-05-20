@@ -3,6 +3,7 @@
 use smithay::backend::allocator::{
     Buffer, Format, Fourcc, Modifier, dmabuf::Dmabuf,
 };
+use std::env;
 use std::ffi::{CStr, CString};
 use std::os::fd::AsRawFd;
 
@@ -140,6 +141,9 @@ impl EGLHelper {
     }
 
     pub fn dmabuf_to_image(&self, dmabuf: &Dmabuf) -> EGLImage {
+        let disable_modifiers = env::var("WAYLANDCRAFT_DISABLE_DMABUF_MODIFIERS")
+            .map(|v| matches!(v.to_ascii_lowercase().as_str(), "1" | "true" | "yes" | "on"))
+            .unwrap_or(false);
         let mut attribs: Vec<EGLAttrib> = vec![];
         macro_rules! pair {
             ($a:expr, $v:expr) => {
@@ -192,7 +196,7 @@ impl EGLHelper {
             pair!(plane_offset_attr[idx], offsets.next().unwrap());
             pair!(plane_pitch_attr[idx], strides.next().unwrap());
 
-            if dmabuf.has_modifier() {
+            if dmabuf.has_modifier() && !disable_modifiers {
                 let m = u64::from(dmabuf.format().modifier);
                 let lo = (m & ((u32::MAX) as u64)) as u32;
                 let hi = (m >> 32) as u32;
