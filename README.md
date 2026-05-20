@@ -45,6 +45,14 @@ Partial support is available through shader compatibility mode (enabled by defau
 If a shader pack causes visual glitches, keep compatibility mode enabled and prefer translucent windows in-world.
 You can force this mode with `WAYLANDCRAFT_SHADER_COMPAT=true` or `-Dwaylandcraft.shaderCompat=true`.
 
+### NVIDIA RTX support tips
+For NVIDIA RTX cards, set these launch environment variables for better stability/compatibility:
+- `__GL_THREADED_OPTIMIZATIONS=0`
+- `WAYLANDCRAFT_SHADER_COMPAT=true`
+- `WAYLANDCRAFT_DISABLE_DMABUF_MODIFIERS=true` (helps on drivers that mis-handle explicit DMA-BUF modifiers)
+
+You can also set JVM flag `-Dwaylandcraft.shaderCompat=true` as an alternative to the env var.
+
 ## Common issues
 ### Crash with `GLFW error: EGL: Failed to clear current context`
 Try setting the environment variable `__GL_THREADED_OPTIMIZATIONS=0` in your launcher.
