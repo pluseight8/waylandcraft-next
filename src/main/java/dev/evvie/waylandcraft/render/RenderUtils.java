@@ -30,7 +30,8 @@ import net.minecraft.util.Util;
 import net.minecraft.world.phys.Vec3;
 
 public class RenderUtils {
-	
+	private static final boolean SHADER_COMPAT_MODE = Boolean.parseBoolean(System.getProperty("waylandcraft.shaderCompat", System.getenv().getOrDefault("WAYLANDCRAFT_SHADER_COMPAT", "true")));
+
 	private static final RenderPipeline.Snippet WINDOW_PIPELINE_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
 			.withVertexShader(Identifier.fromNamespaceAndPath(WaylandCraft.MOD_ID, "core/rendertype_window"))
 			.withFragmentShader(Identifier.fromNamespaceAndPath(WaylandCraft.MOD_ID, "core/rendertype_window"))
@@ -114,11 +115,11 @@ public class RenderUtils {
 		Function<Identifier, RenderType> renderType;
 		
 		// Front quad
-		renderType = cutout ? WINDOW_CUTOUT : WINDOW_TRANSLUCENT;
+		renderType = (cutout && !SHADER_COMPAT_MODE) ? WINDOW_CUTOUT : WINDOW_TRANSLUCENT;
 		collector.submitCustomGeometry(poseStack, renderType.apply(framebuffer.getTextureLocation()), new FramebufferRenderInstance(tl, bl, br, tr, false));
 		
 		// Back quad
-		renderType = cutout ? WINDOW_BACKGROUND_CUTOUT : WINDOW_BACKGROUND_TRANSLUCENT;
+		renderType = (cutout && !SHADER_COMPAT_MODE) ? WINDOW_BACKGROUND_CUTOUT : WINDOW_BACKGROUND_TRANSLUCENT;
 		collector.submitCustomGeometry(poseStack, renderType.apply(framebuffer.getTextureLocation()), new FramebufferRenderInstance(tl, bl, br, tr, true));
 	}
 	
@@ -144,7 +145,7 @@ public class RenderUtils {
 	
 	public static void renderFramebuffer2D(GuiGraphicsExtractor context, WindowFramebuffer framebuffer, int x, int y, int w, int h) {
 		if(!framebuffer.isValid()) return;
-		((IGuiGraphicsExtractor) context).invokeInnerBlit(WINDOW_BLIT, framebuffer.getTextureLocation(), x, x + w, y, y + h, 0.0f, 1.0f, 0.0f, 1.0f, -1);
+		((IGuiGraphicsExtractor) context).invokeInnerBlit(SHADER_COMPAT_MODE ? RenderPipelines.GUI_TEXTURED : WINDOW_BLIT, framebuffer.getTextureLocation(), x, x + w, y, y + h, 0.0f, 1.0f, 0.0f, 1.0f, -1);
 	}
 	
 }

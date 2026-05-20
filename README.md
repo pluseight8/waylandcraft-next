@@ -6,6 +6,11 @@ Wayland Compositor in Minecraft
 
 Now available on [Modrinth](https://modrinth.com/mod/waylandcraft)!
 
+## Описание на русском
+WaylandCraft — это мод, который встраивает Wayland-композитор прямо в Minecraft: вы можете запускать Linux-приложения и видеть их окна в игровом мире, закреплять их, переносить и взаимодействовать с ними как с внутриигровыми объектами.
+
+Главный человек, создавший этот «тайный мод» — **EVV1E**. Официальный репозиторий: https://github.com/EVV1E/waylandcraft
+
 ## System dependencies
 - OS: Linux
 - Minecraft 26.1.2
@@ -41,7 +46,17 @@ Depending on your VR mod, you can probably get the windows to display fine but y
 the windows using your controller. Soooo, kinda.
 
 ### Does this work with shaders?
-The windows are rendered into the world by themselves (not like blocks or entities) so a lot of shaders will break the functionality.
+Partial support is available through shader compatibility mode (enabled by default).
+If a shader pack causes visual glitches, keep compatibility mode enabled and prefer translucent windows in-world.
+You can force this mode with `WAYLANDCRAFT_SHADER_COMPAT=true` or `-Dwaylandcraft.shaderCompat=true`.
+
+### NVIDIA RTX support tips
+For NVIDIA RTX cards, set these launch environment variables for better stability/compatibility:
+- `__GL_THREADED_OPTIMIZATIONS=0`
+- `WAYLANDCRAFT_SHADER_COMPAT=true`
+- `WAYLANDCRAFT_DISABLE_DMABUF_MODIFIERS=true` (helps on drivers that mis-handle explicit DMA-BUF modifiers)
+
+You can also set JVM flag `-Dwaylandcraft.shaderCompat=true` as an alternative to the env var.
 
 ## Common issues
 ### Crash with `GLFW error: EGL: Failed to clear current context`
