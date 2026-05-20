@@ -6,6 +6,11 @@ Wayland Compositor in Minecraft
 
 Now available on [Modrinth](https://modrinth.com/mod/waylandcraft)!
 
+## Описание на русском
+WaylandCraft — это мод, который встраивает Wayland-композитор прямо в Minecraft: вы можете запускать Linux-приложения и видеть их окна в игровом мире, закреплять их, переносить и взаимодействовать с ними как с внутриигровыми объектами.
+
+Главный человек, создавший этот «тайный мод» — **EVV1E**. Официальный репозиторий: https://github.com/EVV1E/waylandcraft
+
 ## System dependencies
 - OS: Linux
 - Minecraft 26.1.2
