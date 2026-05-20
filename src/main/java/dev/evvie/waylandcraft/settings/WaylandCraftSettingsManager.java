@@ -3,6 +3,7 @@ package dev.evvie.waylandcraft.settings;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import dev.evvie.waylandcraft.WaylandCraft;
 import net.minecraft.client.Minecraft;
@@ -20,15 +21,14 @@ public class WaylandCraftSettingsManager {
 		try {
 			init();
 		} catch(IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Failed to read settings storage!");
+			WaylandCraft.LOGGER.error("Failed to initialize WaylandCraft settings. Continuing with defaults.", e);
 		}
 	}
 	
 	private void init() throws IOException {
 		settingsDir = new File(Minecraft.getInstance().gameDirectory, "waylandcraft");
-		if(!settingsDir.exists()) {
-			settingsDir.mkdir();
+		if(!settingsDir.exists() && !settingsDir.mkdir()) {
+			throw new IOException("Failed to create WaylandCraft settings directory: " + settingsDir.getAbsolutePath());
 		}
 		else if(!settingsDir.isDirectory()) {
 			throw new IOException("Waylandcraft settings directory exists but is not a directory");
@@ -54,7 +54,7 @@ public class WaylandCraftSettingsManager {
 		try {
 			Process process = new ProcessBuilder("xkbcli", "dump-keymap").start();
 			byte[] data = process.getInputStream().readAllBytes();
-			keymap = new String(data);
+			keymap = new String(data, StandardCharsets.UTF_8);
 			
 			int exitCode = process.waitFor();
 			if(exitCode != 0) {
@@ -73,14 +73,11 @@ public class WaylandCraftSettingsManager {
 	private String tryReadKeymapFromFile() {
 		if(!(keymapFile.exists() && keymapFile.isFile())) return null;
 		
-		try {
-			FileInputStream stream = new FileInputStream(keymapFile);
+		try (FileInputStream stream = new FileInputStream(keymapFile)) {
 			byte[] data = stream.readAllBytes();
-			String keymap = new String(data);
-			stream.close();
-			return keymap;
+			return new String(data, StandardCharsets.UTF_8);
 		} catch(IOException e) {
-			WaylandCraft.LOGGER.info("Error reading keymap file!", e);
+			WaylandCraft.LOGGER.info("Error reading keymap file {}", keymapFile.getAbsolutePath(), e);
 			return null;
 		}
 	}

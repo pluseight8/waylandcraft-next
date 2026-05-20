@@ -41,7 +41,9 @@ Depending on your VR mod, you can probably get the windows to display fine but y
 the windows using your controller. Soooo, kinda.
 
 ### Does this work with shaders?
-The windows are rendered into the world by themselves (not like blocks or entities) so a lot of shaders will break the functionality.
+Partial support is available through shader compatibility mode (enabled by default).
+If a shader pack causes visual glitches, keep compatibility mode enabled and prefer translucent windows in-world.
+You can force this mode with `WAYLANDCRAFT_SHADER_COMPAT=true` or `-Dwaylandcraft.shaderCompat=true`.
 
 ## Common issues
 ### Crash with `GLFW error: EGL: Failed to clear current context`

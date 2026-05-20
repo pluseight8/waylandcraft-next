@@ -46,23 +46,22 @@ public class WaylandCraftBridge {
 		boolean loaded = false;
 		InputStream inputStream = WaylandCraftBridge.class.getResourceAsStream("/libwaylandcraft.so");
 		if(inputStream != null) {
-			try {
-				byte[] data = inputStream.readAllBytes();
-				inputStream.close();
+			try (InputStream in = inputStream) {
+				byte[] data = in.readAllBytes();
 				
 				File temp = File.createTempFile("waylandcraft-", "-libwaylandcraft.so");
 				temp.deleteOnExit();
 				
-				FileOutputStream outputStream = new FileOutputStream(temp);
-				outputStream.write(data);
-				outputStream.close();
+				try (FileOutputStream outputStream = new FileOutputStream(temp)) {
+					outputStream.write(data);
+				}
 				
 				System.load(temp.getAbsolutePath());
 				loaded = true;
 				
-				WaylandCraft.LOGGER.info("Loaded native library from jar");
-			} catch (IOException e) {
-				e.printStackTrace();
+				WaylandCraft.LOGGER.info("Loaded native library from jar: {}", temp.getAbsolutePath());
+			} catch (IOException | UnsatisfiedLinkError e) {
+				WaylandCraft.LOGGER.error("Failed to load native library from bundled jar", e);
 			}
 		}
 		
